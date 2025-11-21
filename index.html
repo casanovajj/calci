@@ -684,7 +684,7 @@
 
                 <div class="student-header-row">
                     <strong>Manage students</strong>
-                    <span class="chip"> </span>
+                    <span class="chip"></span>
                 </div>
 
                 <div class="student-form">
@@ -746,7 +746,7 @@
         const logoutBtn = document.getElementById("logoutBtn");
         const headerTeacherName = document.getElementById("headerTeacherName");
 
-        // Block numbers & special chars in name as user types (only letters & spaces)
+        // Block numbers & special chars in teacher name as user types (only letters & spaces)
         loginNameInput.addEventListener("input", () => {
             loginNameInput.value = loginNameInput.value.replace(/[^A-Za-z\s]/g, "");
         });
@@ -834,7 +834,7 @@
         };
 
         const totalSalaryEl = document.getElementById("totalSalary");
-        thetotalClassesEl = document.getElementById("totalClasses");
+        const totalClassesEl = document.getElementById("totalClasses");
         const bdPaid = document.getElementById("bdPaid");
         const bdCalib = document.getElementById("bdCalib");
         const bdNoShow = document.getElementById("bdNoShow");
@@ -930,6 +930,11 @@
 
         let students = [];
         let notifCounter = 0;
+
+        // Block numbers & special chars in STUDENT name as user types (only letters & spaces)
+        studentNameInput.addEventListener("input", () => {
+            studentNameInput.value = studentNameInput.value.replace(/[^A-Za-z\s]/g, "");
+        });
 
         function renderNotificationsEmptyState() {
             notificationsList.innerHTML =
@@ -1065,6 +1070,12 @@
 
             if (!name) {
                 alert("Please enter a student name.");
+                return;
+            }
+
+            // Validate student name: same rules as teacher (letters + spaces, min 2 chars)
+            if (!isValidName(name)) {
+                alert("Please enter a valid student name (letters and spaces only, at least 2 characters).");
                 return;
             }
 
