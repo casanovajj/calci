@@ -517,7 +517,7 @@
 
             <div class="field">
                 <label for="loginName">Teacher name</label>
-                <input id="loginName" type="text" placeholder="e.g. Manish singh" />
+                <input id="loginName" type="text" placeholder="e.g. Manish Singh" />
             </div>
             <div class="field">
                 <label for="loginEmail">Email <small>(optional)</small></label>
@@ -529,7 +529,7 @@
             </button>
 
             <div class="login-footer">
-                 JetLearn All rights reserved.
+                JetLearn All rights reserved.
             </div>
         </div>
     </div>
@@ -601,7 +601,7 @@
                     <div class="field">
                         <label>
                             Night classes
-                            <small>₹125 / class (12:30am–5:30am)</small>
+                            <small>₹125 allowance</small>
                         </label>
                         <input type="number" id="night" min="0" value="0" />
                     </div>
@@ -684,7 +684,7 @@
 
                 <div class="student-header-row">
                     <strong>Manage students</strong>
-                    <span class="chip"> ·&amp; 16</span>
+                    <span class="chip"> </span>
                 </div>
 
                 <div class="student-form">
@@ -746,6 +746,22 @@
         const logoutBtn = document.getElementById("logoutBtn");
         const headerTeacherName = document.getElementById("headerTeacherName");
 
+        // Block numbers & special chars in name as user types (only letters & spaces)
+        loginNameInput.addEventListener("input", () => {
+            loginNameInput.value = loginNameInput.value.replace(/[^A-Za-z\s]/g, "");
+        });
+
+        function isValidName(name) {
+            // Only letters and spaces, at least 2 characters
+            return /^[A-Za-z\s]{2,}$/.test(name);
+        }
+
+        function isValidEmail(email) {
+            // Basic email validation: something@something.domain
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailPattern.test(email);
+        }
+
         function showDashboard(name) {
             headerTeacherName.textContent = name || "Teacher";
             loginScreen.style.display = "none";
@@ -767,12 +783,24 @@
 
         loginBtn.addEventListener("click", () => {
             const name = loginNameInput.value.trim();
+            const email = loginEmailInput.value.trim();
+
             if (!name) {
                 alert("Please enter your name.");
                 return;
             }
+
+            if (!isValidName(name)) {
+                alert("Please enter a valid name (letters and spaces only, at least 2 characters).");
+                return;
+            }
+
+            if (email && !isValidEmail(email)) {
+                alert("Please enter a valid email address (e.g. name@jetlearn.com).");
+                return;
+            }
+
             localStorage.setItem("jetlearn_teacher_name", name);
-            const email = loginEmailInput.value.trim();
             if (email) {
                 localStorage.setItem("jetlearn_teacher_email", email);
             }
@@ -806,7 +834,7 @@
         };
 
         const totalSalaryEl = document.getElementById("totalSalary");
-        const totalClassesEl = document.getElementById("totalClasses");
+        thetotalClassesEl = document.getElementById("totalClasses");
         const bdPaid = document.getElementById("bdPaid");
         const bdCalib = document.getElementById("bdCalib");
         const bdNoShow = document.getElementById("bdNoShow");
