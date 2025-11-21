@@ -520,7 +520,7 @@
           <div class="field">
             <label>
               Night classes
-              <small>₹150 / class (12:30am–5:30am)</small>
+              <small>₹450 / class (12:30am–5:30am)</small>
             </label>
             <input type="number" id="night" min="0" value="0" />
           </div>
@@ -587,16 +587,21 @@
               Student Tracker
               <span class="card-title-badge">CPR & last class alerts</span>
             </div>
-            <p class="card-sub">Track classes per student. Alerts fire at every 4th class & the 12th class.</p>
+            <p class="card-sub">Track classes per student. Alerts fire at every 4th class & the 12th / 16th class.</p>
           </div>
-          <span class="badge-soft">
-            <span id="studentCount">0</span> students
-          </span>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+            <span class="badge-soft">
+              <span id="studentCount">0</span> students
+            </span>
+            <button class="btn btn-sm secondary" id="exportBtn" type="button">
+              Export to Excel
+            </button>
+          </div>
         </div>
 
         <div class="student-header-row">
           <strong>Manage students</strong>
-          <span class="chip">CPR form: 4, 8, 12, 16… &nbsp;|&nbsp; Last class: 12</span>
+          <span class="chip">CPR form: 4, 8, 12, 16… &nbsp;|&nbsp; Last class: 12 &amp; 16</span>
         </div>
 
         <div class="student-form">
@@ -654,7 +659,7 @@
       paid: 375,
       calibration: 375,
       noshow: 150,
-      night: 150,
+      night: 450, // updated
       conversion: 750,
       audit: 250,
     };
@@ -677,6 +682,8 @@
     const bdNight = document.getElementById("bdNight");
     const bdConv = document.getElementById("bdConv");
     const bdAudit = document.getElementById("bdAudit");
+
+    let lastSalaryData = null;
 
     function valInt(input) {
       const v = Number(input.value);
@@ -725,6 +732,26 @@
       bdNight.textContent = formatINR(nightAmount);
       bdConv.textContent = formatINR(convAmount);
       bdAudit.textContent = formatINR(auditAmount);
+
+      lastSalaryData = {
+        total,
+        totalClasses,
+        paidAmount,
+        calibAmount,
+        noShowAmount,
+        nightAmount,
+        convAmount,
+        auditAmount,
+        counts: {
+          paidMath,
+          paidCoding,
+          calibration,
+          noshow,
+          night,
+          conversions,
+          auditing,
+        },
+      };
     }
 
     Object.values(fields).forEach((input) => {
@@ -740,6 +767,7 @@
     const studentCountEl = document.getElementById("studentCount");
     const notificationsList = document.getElementById("notificationsList");
     const clearAlertsBtn = document.getElementById("clearAlertsBtn");
+    const exportBtn = document.getElementById("exportBtn");
 
     let students = [];
     let notifCounter = 0;
@@ -789,7 +817,7 @@
     function calculateStatus(classes) {
       if (classes === 0) return { label: "Not started", className: "status-ok" };
       const isCPR = classes % 4 === 0;
-      const isLast = classes === 12;
+      const isLast = classes === 12 || classes === 16; // updated
       if (isLast) {
         return { label: "Last class form", className: "status-last" };
       }
@@ -867,11 +895,13 @@
             student.name + " has completed " + next + " classes. Fill CPR form."
           );
         }
-        if (next === 12) {
+        if (next === 12 || next === 16) {
           addNotification(
             "Last class",
             student.name +
-              " has reached class 12. Fill the last class form & close out journey."
+              " has reached class " +
+              next +
+              ". Fill the last class form & close out journey."
           );
         }
       }
@@ -891,6 +921,69 @@
       studentNameInput.value = "";
       renderStudents();
     });
+
+    // --- Export to Excel (CSV) ---
+    function toCsvValue(value) {
+      const str = String(value ?? "");
+      if (/[",\n]/.test(str)) {
+        return '"' + str.replace(/"/g, '""') + '"';
+      }
+      return str;
+    }
+
+    function exportToCsv() {
+      // make sure salary data is up to date
+      recalcSalary();
+      const s = lastSalaryData;
+
+      const rows = [];
+      rows.push(["JetLearn Salary & Student Export"]);
+      rows.push(["Generated at", new Date().toLocaleString()]);
+      rows.push([]);
+
+      rows.push(["Salary summary"]);
+      rows.push(["Total payout (INR)", s.total]);
+      rows.push(["Total classes", s.totalClasses]);
+      rows.push(["Paid classes amount", s.paidAmount]);
+      rows.push(["Calibration amount", s.calibAmount]);
+      rows.push(["No-shows amount", s.noShowAmount]);
+      rows.push(["Night classes amount", s.nightAmount]);
+      rows.push(["Conversions amount", s.convAmount]);
+      rows.push(["Auditing amount", s.auditAmount]);
+      rows.push([]);
+      rows.push(["Salary inputs (counts)"]);
+      rows.push(["Paid Maths", s.counts.paidMath]);
+      rows.push(["Paid Coding", s.counts.paidCoding]);
+      rows.push(["Calibration", s.counts.calibration]);
+      rows.push(["No-shows", s.counts.noshow]);
+      rows.push(["Night classes", s.counts.night]);
+      rows.push(["Conversions", s.counts.conversions]);
+      rows.push(["Auditing", s.counts.auditing]);
+
+      rows.push([]);
+      rows.push(["Students"]);
+      rows.push(["Name", "Subject", "Classes"]);
+
+      students.forEach((st) => {
+        rows.push([st.name, st.subject, st.classes]);
+      });
+
+      const csvString = rows
+        .map((row) => row.map(toCsvValue).join(","))
+        .join("\r\n");
+
+      const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "jetlearn_dashboard_export.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    exportBtn.addEventListener("click", exportToCsv);
 
     // initial
     renderNotificationsEmptyState();
