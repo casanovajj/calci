@@ -1,993 +1,1116 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>JetLearn | Teacher Salary & Class Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root {
-      --jet-yellow: #ffd600;
-      --jet-dark: #111111;
-      --jet-light: #fffdf0;
-      --card-bg: #ffffff;
-      --border-radius: 18px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    body {
-      min-height: 100vh;
-      background: radial-gradient(circle at top, #fff7c2 0, #ffffff 40%, #f6f7fb 100%);
-      color: var(--jet-dark);
-      padding: 24px 16px 40px;
-    }
-
-    .app-shell {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .logo-circle {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: var(--jet-yellow);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      letter-spacing: 1px;
-      font-size: 18px;
-      color: #000;
-    }
-
-    .brand-text {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .brand-text span:first-child {
-      font-weight: 700;
-      font-size: 20px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .brand-text span:last-child {
-      font-size: 12px;
-      text-transform: uppercase;
-      color: #555;
-      letter-spacing: 0.16em;
-    }
-
-    .pill {
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.04);
-      padding: 6px 14px;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .pill-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #12b981;
-      box-shadow: 0 0 0 4px rgba(18, 185, 129, 0.24);
-    }
-
-    main {
-      display: grid;
-      gap: 20px;
-    }
-
-    @media (min-width: 900px) {
-      main {
-        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-      }
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--border-radius);
-      padding: 18px 18px 20px;
-      box-shadow:
-        0 18px 40px rgba(15, 23, 42, 0.08),
-        0 0 0 1px rgba(15, 23, 42, 0.04);
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
-    .card-title {
-      font-weight: 600;
-      font-size: 17px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .card-title-badge {
-      background: var(--jet-yellow);
-      border-radius: 999px;
-      padding: 2px 8px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-    }
-
-    .card-sub {
-      font-size: 13px;
-      color: #666;
-    }
-
-    .badge-soft {
-      font-size: 11px;
-      border-radius: 999px;
-      padding: 3px 8px;
-      background: rgba(0, 0, 0, 0.03);
-    }
-
-    .grid-2 {
-      display: grid;
-      gap: 12px;
-    }
-
-    @media (min-width: 640px) {
-      .grid-2 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-size: 13px;
-    }
-
-    .field label {
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .field small {
-      font-weight: 400;
-      color: #666;
-      margin-left: 4px;
-    }
-
-    .field input[type="number"],
-    .field input[type="text"],
-    .field select {
-      border-radius: 10px;
-      border: 1px solid rgba(15, 23, 42, 0.12);
-      padding: 7px 9px;
-      font-size: 13px;
-      outline: none;
-      transition: border 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
-      background: #fdfdfd;
-    }
-
-    .field input:focus,
-    .field select:focus {
-      border-color: #111827;
-      box-shadow: 0 0 0 1px #11182720;
-      transform: translateY(-0.5px);
-    }
-
-    .field input::-webkit-outer-spin-button,
-    .field input::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
-    .field input[type="number"] {
-      -moz-appearance: textfield;
-    }
-
-    .salary-total {
-      margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: var(--jet-yellow);
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .salary-total-main {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-    }
-
-    .salary-total-sub {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      opacity: 0.8;
-    }
-
-    .salary-breakdown {
-      margin-top: 10px;
-      border-radius: 12px;
-      background: rgba(15, 23, 42, 0.02);
-      padding: 10px 12px;
-      font-size: 12px;
-      display: grid;
-      gap: 3px;
-    }
-
-    .salary-breakdown-row {
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .salary-breakdown-row span:last-child {
-      font-variant-numeric: tabular-nums;
-    }
-
-    .student-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-      font-size: 13px;
-      color: #555;
-    }
-
-    .student-header-row strong {
-      font-size: 14px;
-      color: #111;
-    }
-
-    .chip {
-      border-radius: 999px;
-      padding: 4px 9px;
-      font-size: 11px;
-      background: rgba(17, 24, 39, 0.04);
-    }
-
-    .student-form {
-      display: grid;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    @media (min-width: 640px) {
-      .student-form {
-        grid-template-columns: 2.3fr 1.4fr auto;
-      }
-    }
-
-    .btn {
-      border-radius: 999px;
-      border: none;
-      padding: 7px 14px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #000;
-      color: #fff;
-      transition: transform 0.07s ease, box-shadow 0.07s ease, opacity 0.1s ease;
-    }
-
-    .btn.secondary {
-      background: #11182708;
-      color: #111827;
-      border: 1px solid rgba(15, 23, 42, 0.12);
-    }
-
-    .btn-sm {
-      padding: 5px 9px;
-      font-size: 11px;
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 12px 20px rgba(15, 23, 42, 0.14);
-    }
-
-    .btn:active {
-      transform: translateY(0);
-      box-shadow: none;
-      opacity: 0.9;
-    }
-
-    .students-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 4px;
-      font-size: 12px;
-    }
-
-    .students-table th,
-    .students-table td {
-      padding: 6px 4px;
-      text-align: left;
-      white-space: nowrap;
-    }
-
-    .students-table th {
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-size: 10px;
-      color: #6b7280;
-      border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-    }
-
-    .students-table tr:nth-child(even) td {
-      background: rgba(249, 250, 251, 0.9);
-    }
-
-    .status-pill {
-      border-radius: 999px;
-      padding: 3px 7px;
-      font-size: 11px;
-    }
-
-    .status-ok {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .status-cpr {
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    .status-last {
-      background: #fee2e2;
-      color: #b91c1c;
-    }
-
-    .notifications {
-      margin-top: 16px;
-      border-radius: 14px;
-      background: #0b1120;
-      color: #e5e7eb;
-      padding: 10px 12px;
-      font-size: 12px;
-    }
-
-    .notifications-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-
-    .notifications-header span {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      opacity: 0.7;
-    }
-
-    .notifications-list {
-      display: grid;
-      gap: 6px;
-      max-height: 130px;
-      overflow-y: auto;
-    }
-
-    .notif-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-    }
-
-    .notif-dot {
-      margin-top: 5px;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--jet-yellow);
-    }
-
-    .notif-body {
-      flex: 1;
-    }
-
-    .notif-body strong {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.13em;
-      display: block;
-      opacity: 0.75;
-      margin-bottom: 1px;
-    }
-
-    .notif-body span {
-      font-size: 12px;
-    }
-
-    .muted {
-      opacity: 0.7;
-    }
-
-    .scroll-soft::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    .scroll-soft::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .scroll-soft::-webkit-scrollbar-thumb {
-      background: rgba(148, 163, 184, 0.7);
-      border-radius: 999px;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <title>JetLearn | Teacher Salary & Class Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --jet-yellow: #ffd600;
+            --jet-dark: #111111;
+            --jet-light: #fffdf0;
+            --card-bg: #ffffff;
+            --border-radius: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at top, #fff7c2 0, #ffffff 40%, #f6f7fb 100%);
+            color: var(--jet-dark);
+            padding: 24px 16px 40px;
+        }
+
+        .app-shell {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* LOGIN SCREEN */
+        #login-screen {
+            min-height: calc(100vh - 48px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow:
+                0 18px 40px rgba(15, 23, 42, 0.12),
+                0 0 0 1px rgba(15, 23, 42, 0.06);
+            padding: 28px 24px 26px;
+            max-width: 420px;
+            width: 100%;
+        }
+
+        .login-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .logo-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--jet-yellow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            letter-spacing: 1px;
+            font-size: 18px;
+            color: #000;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .brand-text span:first-child {
+            font-weight: 700;
+            font-size: 20px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .brand-text span:last-child {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #555;
+            letter-spacing: 0.16em;
+        }
+
+        .login-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .login-sub {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 16px;
+        }
+
+        .pill {
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.04);
+            padding: 6px 14px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pill-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #12b981;
+            box-shadow: 0 0 0 4px rgba(18, 185, 129, 0.24);
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .field label {
+            font-weight: 500;
+        }
+
+        .field small {
+            font-weight: 400;
+            color: #666;
+            margin-left: 4px;
+        }
+
+        .field input[type="text"],
+        .field input[type="email"],
+        .field input[type="number"],
+        .field select {
+            border-radius: 10px;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            padding: 8px 10px;
+            font-size: 13px;
+            outline: none;
+            transition: border 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+            background: #fdfdfd;
+        }
+
+        .field input:focus,
+        .field select:focus {
+            border-color: #111827;
+            box-shadow: 0 0 0 1px #11182720;
+            transform: translateY(-0.5px);
+        }
+
+        .btn {
+            border-radius: 999px;
+            border: none;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #000;
+            color: #fff;
+            transition: transform 0.07s ease, box-shadow 0.07s ease, opacity 0.1s ease;
+        }
+
+        .btn.secondary {
+            background: #11182708;
+            color: #111827;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+        }
+
+        .btn-sm {
+            padding: 5px 9px;
+            font-size: 11px;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 20px rgba(15, 23, 42, 0.14);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: none;
+            opacity: 0.9;
+        }
+
+        .login-footer {
+            margin-top: 10px;
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        /* DASHBOARD */
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        main {
+            display: grid;
+            gap: 20px;
+        }
+
+        @media (min-width: 900px) {
+            main {
+                grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 18px 18px 20px;
+            box-shadow:
+                0 18px 40px rgba(15, 23, 42, 0.08),
+                0 0 0 1px rgba(15, 23, 42, 0.04);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title-badge {
+            background: var(--jet-yellow);
+            border-radius: 999px;
+            padding: 2px 8px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        .card-sub {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .badge-soft {
+            font-size: 11px;
+            border-radius: 999px;
+            padding: 3px 8px;
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .grid-2 {
+            display: grid;
+            gap: 12px;
+        }
+
+        @media (min-width: 640px) {
+            .grid-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        .field input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .field input::-webkit-outer-spin-button,
+        .field input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .salary-total {
+            margin-top: 14px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: var(--jet-yellow);
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .salary-total-main {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+
+        .salary-total-sub {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            opacity: 0.8;
+        }
+
+        .salary-breakdown {
+            margin-top: 10px;
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.02);
+            padding: 10px 12px;
+            font-size: 12px;
+            display: grid;
+            gap: 3px;
+        }
+
+        .salary-breakdown-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .salary-breakdown-row span:last-child {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .student-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .student-header-row strong {
+            font-size: 14px;
+            color: #111;
+        }
+
+        .chip {
+            border-radius: 999px;
+            padding: 4px 9px;
+            font-size: 11px;
+            background: rgba(17, 24, 39, 0.04);
+        }
+
+        .student-form {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        @media (min-width: 640px) {
+            .student-form {
+                grid-template-columns: 2.3fr 1.4fr auto;
+            }
+        }
+
+        .students-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 4px;
+            font-size: 12px;
+        }
+
+        .students-table th,
+        .students-table td {
+            padding: 6px 4px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .students-table th {
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 10px;
+            color: #6b7280;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+        }
+
+        .students-table tr:nth-child(even) td {
+            background: rgba(249, 250, 251, 0.9);
+        }
+
+        .status-pill {
+            border-radius: 999px;
+            padding: 3px 7px;
+            font-size: 11px;
+        }
+
+        .status-ok {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-cpr {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-last {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .notifications {
+            margin-top: 16px;
+            border-radius: 14px;
+            background: #0b1120;
+            color: #e5e7eb;
+            padding: 10px 12px;
+            font-size: 12px;
+        }
+
+        .notifications-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .notifications-header span {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            opacity: 0.7;
+        }
+
+        .notifications-list {
+            display: grid;
+            gap: 6px;
+            max-height: 130px;
+            overflow-y: auto;
+        }
+
+        .notif-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .notif-dot {
+            margin-top: 5px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--jet-yellow);
+        }
+
+        .notif-body {
+            flex: 1;
+        }
+
+        .notif-body strong {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.13em;
+            display: block;
+            opacity: 0.75;
+            margin-bottom: 1px;
+        }
+
+        .notif-body span {
+            font-size: 12px;
+        }
+
+        .muted {
+            opacity: 0.7;
+        }
+
+        .scroll-soft::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .scroll-soft::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .scroll-soft::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.7);
+            border-radius: 999px;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="app-shell">
-    <header>
-      <div class="brand">
-        <div class="logo-circle">JET</div>
-        <div class="brand-text">
-          <span>JetLearn</span>
-          <span>Teacher salary & class tracker</span>
-        </div>
-      </div>
-      <div class="pill">
-        <div class="pill-dot"></div>
-        Live salary counter
-      </div>
-    </header>
-
-    <main>
-      <!-- Salary calculator -->
-      <section class="card" id="salary-card">
-        <div class="card-header">
-          <div>
-            <div class="card-title">
-              Salary Calculator
-              <span class="card-title-badge">₹ in real time</span>
+    <!-- LOGIN SCREEN -->
+    <div class="app-shell" id="login-screen">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo-circle">JET</div>
+                <div class="brand-text">
+                    <span>JetLearn</span>
+                    <span>Teacher console</span>
+                </div>
             </div>
-            <p class="card-sub">Enter your class counts for this payout cycle.</p>
-          </div>
-          <span class="badge-soft">Rates set for JetLearn</span>
-        </div>
-
-        <div class="grid-2">
-          <div class="field">
-            <label>
-              Paid classes – Maths
-              <small>₹375 / class</small>
-            </label>
-            <input type="number" id="paidMath" min="0" value="0" />
-          </div>
-          <div class="field">
-            <label>
-              Paid classes – Coding
-              <small>₹375 / class</small>
-            </label>
-            <input type="number" id="paidCoding" min="0" value="0" />
-          </div>
-          <div class="field">
-            <label>
-              Calibration classes
-              <small>₹375 / class</small>
-            </label>
-            <input type="number" id="calibration" min="0" value="0" />
-          </div>
-          <div class="field">
-            <label>
-              No-shows
-              <small>₹150 / class</small>
-            </label>
-            <input type="number" id="noshow" min="0" value="0" />
-          </div>
-          <div class="field">
-            <label>
-              Night classes
-              <small>₹450 / class (12:30am–5:30am)</small>
-            </label>
-            <input type="number" id="night" min="0" value="0" />
-          </div>
-          <div class="field">
-            <label>
-              Conversions
-              <small>₹750 / conversion</small>
-            </label>
-            <input type="number" id="conversions" min="0" value="0" />
-          </div>
-          <div class="field">
-            <label>
-              Auditing
-              <small>₹250 / class</small>
-            </label>
-            <input type="number" id="auditing" min="0" value="0" />
-          </div>
-        </div>
-
-        <div class="salary-total">
-          <div>
-            <div class="salary-total-sub">Estimated payout</div>
-            <div class="salary-total-main">₹ <span id="totalSalary">0</span></div>
-          </div>
-          <div style="text-align:right;font-size:11px;">
-            <div><span id="totalClasses">0</span> total classes</div>
-            <div class="muted">Maths + Coding + Calibration + No-shows + Night + Audits</div>
-          </div>
-        </div>
-
-        <div class="salary-breakdown">
-          <div class="salary-breakdown-row">
-            <span>Paid classes</span>
-            <span>₹ <span id="bdPaid">0</span></span>
-          </div>
-          <div class="salary-breakdown-row">
-            <span>Calibration</span>
-            <span>₹ <span id="bdCalib">0</span></span>
-          </div>
-          <div class="salary-breakdown-row">
-            <span>No-shows</span>
-            <span>₹ <span id="bdNoShow">0</span></span>
-          </div>
-          <div class="salary-breakdown-row">
-            <span>Night classes</span>
-            <span>₹ <span id="bdNight">0</span></span>
-          </div>
-          <div class="salary-breakdown-row">
-            <span>Conversions</span>
-            <span>₹ <span id="bdConv">0</span></span>
-          </div>
-          <div class="salary-breakdown-row">
-            <span>Auditing</span>
-            <span>₹ <span id="bdAudit">0</span></span>
-          </div>
-        </div>
-      </section>
-
-      <!-- Student tracker -->
-      <section class="card">
-        <div class="card-header">
-          <div>
-            <div class="card-title">
-              Student Tracker
-              <span class="card-title-badge">CPR & last class alerts</span>
+            <div class="login-title">Sign in to salary counter</div>
+            <div class="login-sub">
+                Enter your name to access the JetLearn salary & class tracker.
             </div>
-            <p class="card-sub">Track classes per student. Alerts fire at every 4th class & the 12th / 16th class.</p>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
-            <span class="badge-soft">
-              <span id="studentCount">0</span> students
-            </span>
-            <button class="btn btn-sm secondary" id="exportBtn" type="button">
-              Export to Excel
+
+            <div class="field">
+                <label for="loginName">Teacher name</label>
+                <input id="loginName" type="text" placeholder="e.g. Manish singh" />
+            </div>
+            <div class="field">
+                <label for="loginEmail">Email <small>(optional)</small></label>
+                <input id="loginEmail" type="email" placeholder="name@jetlearn.com" />
+            </div>
+
+            <button class="btn" id="loginBtn" type="button">
+                Enter dashboard
             </button>
-          </div>
+
+            <div class="login-footer">
+                 JetLearn All rights reserved.
+            </div>
         </div>
+    </div>
 
-        <div class="student-header-row">
-          <strong>Manage students</strong>
-          <span class="chip">CPR form: 4, 8, 12, 16… &nbsp;|&nbsp; Last class: 12 &amp; 16</span>
-        </div>
+    <!-- DASHBOARD -->
+    <div class="app-shell" id="dashboard" style="display:none;">
+        <header>
+            <div class="brand">
+                <div class="logo-circle">JET</div>
+                <div class="brand-text">
+                    <span>JetLearn</span>
+                    <span>Teacher salary & class tracker</span>
+                </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+                <div class="pill">
+                    <div class="pill-dot"></div>
+                    <span>Live counter · <span id="headerTeacherName">Teacher</span></span>
+                </div>
+                <button class="btn btn-sm secondary" id="logoutBtn" type="button">
+                    Logout
+                </button>
+            </div>
+        </header>
 
-        <div class="student-form">
-          <div class="field">
-            <label for="studentName">Student name</label>
-            <input id="studentName" type="text" placeholder="e.g. Aarav Sharma" />
-          </div>
-          <div class="field">
-            <label for="studentSubject">Subject</label>
-            <select id="studentSubject">
-              <option value="Maths">Maths</option>
-              <option value="Coding">Coding</option>
-            </select>
-          </div>
-          <button class="btn" id="addStudentBtn" type="button">
-            + Add student
-          </button>
-        </div>
+        <main>
+            <!-- Salary calculator -->
+            <section class="card" id="salary-card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">
+                            Salary Calculator
+                            <span class="card-title-badge">₹ in real time</span>
+                        </div>
+                        <p class="card-sub">Enter your class counts for this payout cycle.</p>
+                    </div>
+                    <span class="badge-soft">Rates set for JetLearn</span>
+                </div>
 
-        <div style="overflow-x:auto;">
-          <table class="students-table">
-            <thead>
-              <tr>
-                <th>Student</th>
-                <th>Subject</th>
-                <th>Classes</th>
-                <th>Status</th>
-                <th style="text-align:right;">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="studentsTbody">
-              <!-- rows injected here -->
-            </tbody>
-          </table>
-        </div>
+                <div class="grid-2">
+                    <div class="field">
+                        <label>
+                            Paid classes – Maths
+                            <small>₹375 / class</small>
+                        </label>
+                        <input type="number" id="paidMath" min="0" value="0" />
+                    </div>
+                    <div class="field">
+                        <label>
+                            Paid classes – Coding
+                            <small>₹375 / class</small>
+                        </label>
+                        <input type="number" id="paidCoding" min="0" value="0" />
+                    </div>
+                    <div class="field">
+                        <label>
+                            Calibration classes
+                            <small>₹375 / class</small>
+                        </label>
+                        <input type="number" id="calibration" min="0" value="0" />
+                    </div>
+                    <div class="field">
+                        <label>
+                            No-shows
+                            <small>₹150 / class</small>
+                        </label>
+                        <input type="number" id="noshow" min="0" value="0" />
+                    </div>
+                    <div class="field">
+                        <label>
+                            Night classes
+                            <small>₹125 / class (12:30am–5:30am)</small>
+                        </label>
+                        <input type="number" id="night" min="0" value="0" />
+                    </div>
+                    <div class="field">
+                        <label>
+                            Conversions
+                            <small>₹750 / conversion</small>
+                        </label>
+                        <input type="number" id="conversions" min="0" value="0" />
+                    </div>
+                    <div class="field">
+                        <label>
+                            Auditing
+                            <small>₹250 / class</small>
+                        </label>
+                        <input type="number" id="auditing" min="0" value="0" />
+                    </div>
+                </div>
 
-        <div class="notifications scroll-soft">
-          <div class="notifications-header">
-            <span>Alerts</span>
-            <button class="btn btn-sm secondary" id="clearAlertsBtn" type="button">
-              Clear
-            </button>
-          </div>
-          <div id="notificationsList" class="notifications-list">
-            <div class="muted">No alerts yet. Add a student and start counting classes.</div>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
+                <div class="salary-total">
+                    <div>
+                        <div class="salary-total-sub">Estimated payout</div>
+                        <div class="salary-total-main">₹ <span id="totalSalary">0</span></div>
+                    </div>
+                    <div style="text-align:right;font-size:11px;">
+                        <div><span id="totalClasses">0</span> total classes</div>
+                        <div class="muted">Maths + Coding + Calibration + No-shows + Night + Audits</div>
+                    </div>
+                </div>
 
-  <script>
-    // --- Salary calculator logic ---
-    const RATES = {
-      paid: 375,
-      calibration: 375,
-      noshow: 150,
-      night: 450, // updated
-      conversion: 750,
-      audit: 250,
-    };
+                <div class="salary-breakdown">
+                    <div class="salary-breakdown-row">
+                        <span>Paid classes</span>
+                        <span>₹ <span id="bdPaid">0</span></span>
+                    </div>
+                    <div class="salary-breakdown-row">
+                        <span>Calibration</span>
+                        <span>₹ <span id="bdCalib">0</span></span>
+                    </div>
+                    <div class="salary-breakdown-row">
+                        <span>No-shows</span>
+                        <span>₹ <span id="bdNoShow">0</span></span>
+                    </div>
+                    <div class="salary-breakdown-row">
+                        <span>Night classes</span>
+                        <span>₹ <span id="bdNight">0</span></span>
+                    </div>
+                    <div class="salary-breakdown-row">
+                        <span>Conversions</span>
+                        <span>₹ <span id="bdConv">0</span></span>
+                    </div>
+                    <div class="salary-breakdown-row">
+                        <span>Auditing</span>
+                        <span>₹ <span id="bdAudit">0</span></span>
+                    </div>
+                </div>
+            </section>
 
-    const fields = {
-      paidMath: document.getElementById("paidMath"),
-      paidCoding: document.getElementById("paidCoding"),
-      calibration: document.getElementById("calibration"),
-      noshow: document.getElementById("noshow"),
-      night: document.getElementById("night"),
-      conversions: document.getElementById("conversions"),
-      auditing: document.getElementById("auditing"),
-    };
+            <!-- Student tracker -->
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">
+                            Student Tracker
+                            <span class="card-title-badge">CPR & last class alerts</span>
+                        </div>
+                        <p class="card-sub">
+                            Track classes per student. Alerts fire at every 4th class & the 12th / 16th class.
+                        </p>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+                        <span class="badge-soft">
+                            <span id="studentCount">0</span> students
+                        </span>
+                        <button class="btn btn-sm secondary" id="exportBtn" type="button">
+                            Export to Excel
+                        </button>
+                    </div>
+                </div>
 
-    const totalSalaryEl = document.getElementById("totalSalary");
-    const totalClassesEl = document.getElementById("totalClasses");
-    const bdPaid = document.getElementById("bdPaid");
-    const bdCalib = document.getElementById("bdCalib");
-    const bdNoShow = document.getElementById("bdNoShow");
-    const bdNight = document.getElementById("bdNight");
-    const bdConv = document.getElementById("bdConv");
-    const bdAudit = document.getElementById("bdAudit");
+                <div class="student-header-row">
+                    <strong>Manage students</strong>
+                    <span class="chip"> ·&amp; 16</span>
+                </div>
 
-    let lastSalaryData = null;
+                <div class="student-form">
+                    <div class="field">
+                        <label for="studentName">Student name</label>
+                        <input id="studentName" type="text" placeholder="e.g. Aarav Sharma" />
+                    </div>
+                    <div class="field">
+                        <label for="studentSubject">Subject</label>
+                        <select id="studentSubject">
+                            <option value="Maths">Maths</option>
+                            <option value="Coding">Coding</option>
+                        </select>
+                    </div>
+                    <button class="btn" id="addStudentBtn" type="button">
+                        + Add student
+                    </button>
+                </div>
 
-    function valInt(input) {
-      const v = Number(input.value);
-      return Number.isFinite(v) && v > 0 ? Math.floor(v) : 0;
-    }
+                <div style="overflow-x:auto;">
+                    <table class="students-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Subject</th>
+                                <th>Classes</th>
+                                <th>Status</th>
+                                <th style="text-align:right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTbody">
+                            <!-- rows injected here -->
+                        </tbody>
+                    </table>
+                </div>
 
-    function formatINR(num) {
-      return num.toLocaleString("en-IN", { maximumFractionDigits: 0 });
-    }
+                <div class="notifications scroll-soft">
+                    <div class="notifications-header">
+                        <span>Alerts</span>
+                        <button class="btn btn-sm secondary" id="clearAlertsBtn" type="button">
+                            Clear
+                        </button>
+                    </div>
+                    <div id="notificationsList" class="notifications-list">
+                        <div class="muted">No alerts yet. Add a student and start counting classes.</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
 
-    function recalcSalary() {
-      const paidMath = valInt(fields.paidMath);
-      const paidCoding = valInt(fields.paidCoding);
-      const calibration = valInt(fields.calibration);
-      const noshow = valInt(fields.noshow);
-      const night = valInt(fields.night);
-      const conversions = valInt(fields.conversions);
-      const auditing = valInt(fields.auditing);
+    <script>
+        // ---------- LOGIN LOGIC ----------
+        const loginScreen = document.getElementById("login-screen");
+        const dashboard = document.getElementById("dashboard");
+        const loginNameInput = document.getElementById("loginName");
+        const loginEmailInput = document.getElementById("loginEmail");
+        const loginBtn = document.getElementById("loginBtn");
+        const logoutBtn = document.getElementById("logoutBtn");
+        const headerTeacherName = document.getElementById("headerTeacherName");
 
-      const paidTotalClasses = paidMath + paidCoding;
-
-      const paidAmount = paidTotalClasses * RATES.paid;
-      const calibAmount = calibration * RATES.calibration;
-      const noShowAmount = noshow * RATES.noshow;
-      const nightAmount = night * RATES.night;
-      const convAmount = conversions * RATES.conversion;
-      const auditAmount = auditing * RATES.audit;
-
-      const total =
-        paidAmount +
-        calibAmount +
-        noShowAmount +
-        nightAmount +
-        convAmount +
-        auditAmount;
-
-      const totalClasses =
-        paidTotalClasses + calibration + noshow + night + auditing;
-
-      totalSalaryEl.textContent = formatINR(total);
-      totalClassesEl.textContent = totalClasses;
-
-      bdPaid.textContent = formatINR(paidAmount);
-      bdCalib.textContent = formatINR(calibAmount);
-      bdNoShow.textContent = formatINR(noShowAmount);
-      bdNight.textContent = formatINR(nightAmount);
-      bdConv.textContent = formatINR(convAmount);
-      bdAudit.textContent = formatINR(auditAmount);
-
-      lastSalaryData = {
-        total,
-        totalClasses,
-        paidAmount,
-        calibAmount,
-        noShowAmount,
-        nightAmount,
-        convAmount,
-        auditAmount,
-        counts: {
-          paidMath,
-          paidCoding,
-          calibration,
-          noshow,
-          night,
-          conversions,
-          auditing,
-        },
-      };
-    }
-
-    Object.values(fields).forEach((input) => {
-      input.addEventListener("input", recalcSalary);
-    });
-    recalcSalary();
-
-    // --- Student tracker logic ---
-    const studentNameInput = document.getElementById("studentName");
-    const studentSubjectSelect = document.getElementById("studentSubject");
-    const addStudentBtn = document.getElementById("addStudentBtn");
-    const studentsTbody = document.getElementById("studentsTbody");
-    const studentCountEl = document.getElementById("studentCount");
-    const notificationsList = document.getElementById("notificationsList");
-    const clearAlertsBtn = document.getElementById("clearAlertsBtn");
-    const exportBtn = document.getElementById("exportBtn");
-
-    let students = [];
-    let notifCounter = 0;
-
-    function renderNotificationsEmptyState() {
-      notificationsList.innerHTML =
-        '<div class="muted">No alerts yet. Add a student and start counting classes.</div>';
-    }
-
-    function addNotification(type, message) {
-      // type: "CPR" or "Last class"
-      if (notifCounter === 0) {
-        notificationsList.innerHTML = "";
-      }
-      notifCounter++;
-
-      const wrapper = document.createElement("div");
-      wrapper.className = "notif-item";
-
-      const dot = document.createElement("div");
-      dot.className = "notif-dot";
-
-      const body = document.createElement("div");
-      body.className = "notif-body";
-      body.innerHTML =
-        "<strong>" +
-        type +
-        "</strong>" +
-        "<span>" +
-        message +
-        "</span>";
-
-      wrapper.appendChild(dot);
-      wrapper.appendChild(body);
-      notificationsList.prepend(wrapper);
-    }
-
-    clearAlertsBtn.addEventListener("click", () => {
-      notifCounter = 0;
-      renderNotificationsEmptyState();
-    });
-
-    function updateStudentCount() {
-      studentCountEl.textContent = students.length;
-    }
-
-    function calculateStatus(classes) {
-      if (classes === 0) return { label: "Not started", className: "status-ok" };
-      const isCPR = classes % 4 === 0;
-      const isLast = classes === 12 || classes === 16; // updated
-      if (isLast) {
-        return { label: "Last class form", className: "status-last" };
-      }
-      if (isCPR) {
-        return { label: "CPR form due", className: "status-cpr" };
-      }
-      return { label: "On track", className: "status-ok" };
-    }
-
-    function renderStudents() {
-      studentsTbody.innerHTML = "";
-      students.forEach((s, index) => {
-        const tr = document.createElement("tr");
-
-        const nameTd = document.createElement("td");
-        nameTd.textContent = s.name;
-
-        const subjTd = document.createElement("td");
-        subjTd.textContent = s.subject;
-
-        const classesTd = document.createElement("td");
-        classesTd.textContent = s.classes;
-
-        const statusTd = document.createElement("td");
-        const status = calculateStatus(s.classes);
-        const span = document.createElement("span");
-        span.className = "status-pill " + status.className;
-        span.textContent = status.label;
-        statusTd.appendChild(span);
-
-        const actionsTd = document.createElement("td");
-        actionsTd.style.textAlign = "right";
-
-        const incBtn = document.createElement("button");
-        incBtn.type = "button";
-        incBtn.className = "btn btn-sm";
-        incBtn.textContent = "+1";
-        incBtn.title = "Add one class";
-        incBtn.addEventListener("click", () => incrementClasses(index, 1));
-
-        const decBtn = document.createElement("button");
-        decBtn.type = "button";
-        decBtn.className = "btn btn-sm secondary";
-        decBtn.textContent = "−1";
-        decBtn.style.marginLeft = "4px";
-        decBtn.title = "Remove one class";
-        decBtn.addEventListener("click", () => incrementClasses(index, -1));
-
-        actionsTd.appendChild(incBtn);
-        actionsTd.appendChild(decBtn);
-
-        tr.appendChild(nameTd);
-        tr.appendChild(subjTd);
-        tr.appendChild(classesTd);
-        tr.appendChild(statusTd);
-        tr.appendChild(actionsTd);
-
-        studentsTbody.appendChild(tr);
-      });
-      updateStudentCount();
-    }
-
-    function incrementClasses(index, delta) {
-      const student = students[index];
-      const prev = student.classes;
-      let next = prev + delta;
-      if (next < 0) next = 0;
-      student.classes = next;
-
-      // Check alerts on increment only (not on decrement)
-      if (delta > 0) {
-        if (next > 0 && next % 4 === 0) {
-          addNotification(
-            "CPR form",
-            student.name + " has completed " + next + " classes. Fill CPR form."
-          );
+        function showDashboard(name) {
+            headerTeacherName.textContent = name || "Teacher";
+            loginScreen.style.display = "none";
+            dashboard.style.display = "block";
         }
-        if (next === 12 || next === 16) {
-          addNotification(
-            "Last class",
-            student.name +
-              " has reached class " +
-              next +
-              ". Fill the last class form & close out journey."
-          );
+
+        function showLogin() {
+            loginScreen.style.display = "flex";
+            dashboard.style.display = "none";
         }
-      }
-      renderStudents();
-    }
 
-    addStudentBtn.addEventListener("click", () => {
-      const name = studentNameInput.value.trim();
-      const subject = studentSubjectSelect.value;
+        // Check localStorage
+        const savedTeacher = localStorage.getItem("jetlearn_teacher_name");
+        if (savedTeacher) {
+            showDashboard(savedTeacher);
+        } else {
+            showLogin();
+        }
 
-      if (!name) {
-        alert("Please enter a student name.");
-        return;
-      }
+        loginBtn.addEventListener("click", () => {
+            const name = loginNameInput.value.trim();
+            if (!name) {
+                alert("Please enter your name.");
+                return;
+            }
+            localStorage.setItem("jetlearn_teacher_name", name);
+            const email = loginEmailInput.value.trim();
+            if (email) {
+                localStorage.setItem("jetlearn_teacher_email", email);
+            }
+            showDashboard(name);
+        });
 
-      students.push({ name, subject, classes: 0 });
-      studentNameInput.value = "";
-      renderStudents();
-    });
+        logoutBtn.addEventListener("click", () => {
+            localStorage.removeItem("jetlearn_teacher_name");
+            localStorage.removeItem("jetlearn_teacher_email");
+            showLogin();
+        });
 
-    // --- Export to Excel (CSV) ---
-    function toCsvValue(value) {
-      const str = String(value ?? "");
-      if (/[",\n]/.test(str)) {
-        return '"' + str.replace(/"/g, '""') + '"';
-      }
-      return str;
-    }
+        // ---------- SALARY CALCULATOR ----------
+        const RATES = {
+            paid: 375,
+            calibration: 375,
+            noshow: 150,
+            night: 125, // updated
+            conversion: 750,
+            audit: 250,
+        };
 
-    function exportToCsv() {
-      // make sure salary data is up to date
-      recalcSalary();
-      const s = lastSalaryData;
+        const fields = {
+            paidMath: document.getElementById("paidMath"),
+            paidCoding: document.getElementById("paidCoding"),
+            calibration: document.getElementById("calibration"),
+            noshow: document.getElementById("noshow"),
+            night: document.getElementById("night"),
+            conversions: document.getElementById("conversions"),
+            auditing: document.getElementById("auditing"),
+        };
 
-      const rows = [];
-      rows.push(["JetLearn Salary & Student Export"]);
-      rows.push(["Generated at", new Date().toLocaleString()]);
-      rows.push([]);
+        const totalSalaryEl = document.getElementById("totalSalary");
+        const totalClassesEl = document.getElementById("totalClasses");
+        const bdPaid = document.getElementById("bdPaid");
+        const bdCalib = document.getElementById("bdCalib");
+        const bdNoShow = document.getElementById("bdNoShow");
+        const bdNight = document.getElementById("bdNight");
+        const bdConv = document.getElementById("bdConv");
+        const bdAudit = document.getElementById("bdAudit");
 
-      rows.push(["Salary summary"]);
-      rows.push(["Total payout (INR)", s.total]);
-      rows.push(["Total classes", s.totalClasses]);
-      rows.push(["Paid classes amount", s.paidAmount]);
-      rows.push(["Calibration amount", s.calibAmount]);
-      rows.push(["No-shows amount", s.noShowAmount]);
-      rows.push(["Night classes amount", s.nightAmount]);
-      rows.push(["Conversions amount", s.convAmount]);
-      rows.push(["Auditing amount", s.auditAmount]);
-      rows.push([]);
-      rows.push(["Salary inputs (counts)"]);
-      rows.push(["Paid Maths", s.counts.paidMath]);
-      rows.push(["Paid Coding", s.counts.paidCoding]);
-      rows.push(["Calibration", s.counts.calibration]);
-      rows.push(["No-shows", s.counts.noshow]);
-      rows.push(["Night classes", s.counts.night]);
-      rows.push(["Conversions", s.counts.conversions]);
-      rows.push(["Auditing", s.counts.auditing]);
+        let lastSalaryData = null;
 
-      rows.push([]);
-      rows.push(["Students"]);
-      rows.push(["Name", "Subject", "Classes"]);
+        function valInt(input) {
+            const v = Number(input.value);
+            return Number.isFinite(v) && v > 0 ? Math.floor(v) : 0;
+        }
 
-      students.forEach((st) => {
-        rows.push([st.name, st.subject, st.classes]);
-      });
+        function formatINR(num) {
+            return num.toLocaleString("en-IN", { maximumFractionDigits: 0 });
+        }
 
-      const csvString = rows
-        .map((row) => row.map(toCsvValue).join(","))
-        .join("\r\n");
+        function recalcSalary() {
+            const paidMath = valInt(fields.paidMath);
+            const paidCoding = valInt(fields.paidCoding);
+            const calibration = valInt(fields.calibration);
+            const noshow = valInt(fields.noshow);
+            const night = valInt(fields.night);
+            const conversions = valInt(fields.conversions);
+            const auditing = valInt(fields.auditing);
 
-      const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "jetlearn_dashboard_export.csv";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
+            const paidTotalClasses = paidMath + paidCoding;
 
-    exportBtn.addEventListener("click", exportToCsv);
+            const paidAmount = paidTotalClasses * RATES.paid;
+            const calibAmount = calibration * RATES.calibration;
+            const noShowAmount = noshow * RATES.noshow;
+            const nightAmount = night * RATES.night;
+            const convAmount = conversions * RATES.conversion;
+            const auditAmount = auditing * RATES.audit;
 
-    // initial
-    renderNotificationsEmptyState();
-    renderStudents();
-  </script>
+            const total =
+                paidAmount +
+                calibAmount +
+                noShowAmount +
+                nightAmount +
+                convAmount +
+                auditAmount;
+
+            const totalClasses =
+                paidTotalClasses + calibration + noshow + night + auditing;
+
+            totalSalaryEl.textContent = formatINR(total);
+            totalClassesEl.textContent = totalClasses;
+
+            bdPaid.textContent = formatINR(paidAmount);
+            bdCalib.textContent = formatINR(calibAmount);
+            bdNoShow.textContent = formatINR(noShowAmount);
+            bdNight.textContent = formatINR(nightAmount);
+            bdConv.textContent = formatINR(convAmount);
+            bdAudit.textContent = formatINR(auditAmount);
+
+            lastSalaryData = {
+                total,
+                totalClasses,
+                paidAmount,
+                calibAmount,
+                noShowAmount,
+                nightAmount,
+                convAmount,
+                auditAmount,
+                counts: {
+                    paidMath,
+                    paidCoding,
+                    calibration,
+                    noshow,
+                    night,
+                    conversions,
+                    auditing,
+                },
+            };
+        }
+
+        Object.values(fields).forEach((input) => {
+            input.addEventListener("input", recalcSalary);
+        });
+        recalcSalary();
+
+        // ---------- STUDENT TRACKER ----------
+        const studentNameInput = document.getElementById("studentName");
+        const studentSubjectSelect = document.getElementById("studentSubject");
+        const addStudentBtn = document.getElementById("addStudentBtn");
+        const studentsTbody = document.getElementById("studentsTbody");
+        const studentCountEl = document.getElementById("studentCount");
+        const notificationsList = document.getElementById("notificationsList");
+        const clearAlertsBtn = document.getElementById("clearAlertsBtn");
+        const exportBtn = document.getElementById("exportBtn");
+
+        let students = [];
+        let notifCounter = 0;
+
+        function renderNotificationsEmptyState() {
+            notificationsList.innerHTML =
+                '<div class="muted">No alerts yet. Add a student and start counting classes.</div>';
+        }
+
+        function addNotification(type, message) {
+            // type: "CPR" or "Last class"
+            if (notifCounter === 0) {
+                notificationsList.innerHTML = "";
+            }
+            notifCounter++;
+
+            const wrapper = document.createElement("div");
+            wrapper.className = "notif-item";
+
+            const dot = document.createElement("div");
+            dot.className = "notif-dot";
+
+            const body = document.createElement("div");
+            body.className = "notif-body";
+            // no "-" sign anywhere in alert text
+            body.innerHTML =
+                "<strong>" +
+                type +
+                "</strong>" +
+                "<span>" +
+                message +
+                "</span>";
+
+            wrapper.appendChild(dot);
+            wrapper.appendChild(body);
+            notificationsList.prepend(wrapper);
+        }
+
+        clearAlertsBtn.addEventListener("click", () => {
+            notifCounter = 0;
+            renderNotificationsEmptyState();
+        });
+
+        function updateStudentCount() {
+            studentCountEl.textContent = students.length;
+        }
+
+        function calculateStatus(classes) {
+            if (classes === 0) return { label: "Not started", className: "status-ok" };
+            const isCPR = classes % 4 === 0;
+            const isLast = classes === 12 || classes === 16;
+            if (isLast) {
+                return { label: "Last class form", className: "status-last" };
+            }
+            if (isCPR) {
+                return { label: "CPR form due", className: "status-cpr" };
+            }
+            return { label: "On track", className: "status-ok" };
+        }
+
+        function renderStudents() {
+            studentsTbody.innerHTML = "";
+            students.forEach((s, index) => {
+                const tr = document.createElement("tr");
+
+                const nameTd = document.createElement("td");
+                nameTd.textContent = s.name;
+
+                const subjTd = document.createElement("td");
+                subjTd.textContent = s.subject;
+
+                const classesTd = document.createElement("td");
+                classesTd.textContent = s.classes;
+
+                const statusTd = document.createElement("td");
+                const status = calculateStatus(s.classes);
+                const span = document.createElement("span");
+                span.className = "status-pill " + status.className;
+                span.textContent = status.label;
+                statusTd.appendChild(span);
+
+                const actionsTd = document.createElement("td");
+                actionsTd.style.textAlign = "right";
+
+                const incBtn = document.createElement("button");
+                incBtn.type = "button";
+                incBtn.className = "btn btn-sm";
+                incBtn.textContent = "+1";
+                incBtn.title = "Add one class";
+                incBtn.addEventListener("click", () => incrementClasses(index, 1));
+
+                actionsTd.appendChild(incBtn);
+
+                tr.appendChild(nameTd);
+                tr.appendChild(subjTd);
+                tr.appendChild(classesTd);
+                tr.appendChild(statusTd);
+                tr.appendChild(actionsTd);
+
+                studentsTbody.appendChild(tr);
+            });
+            updateStudentCount();
+        }
+
+        function incrementClasses(index, delta) {
+            const student = students[index];
+            const prev = student.classes;
+            let next = prev + delta;
+            if (next < 0) next = 0;
+            student.classes = next;
+
+            // Alerts on increment only
+            if (delta > 0) {
+                if (next > 0 && next % 4 === 0) {
+                    addNotification(
+                        "CPR form",
+                        student.name + " has completed " + next + " classes. Please fill the CPR form."
+                    );
+                }
+                if (next === 12 || next === 16) {
+                    addNotification(
+                        "Last class",
+                        student.name +
+                        " has reached class " +
+                        next +
+                        ". Please fill the last class form."
+                    );
+                }
+            }
+            renderStudents();
+        }
+
+        addStudentBtn.addEventListener("click", () => {
+            const name = studentNameInput.value.trim();
+            const subject = studentSubjectSelect.value;
+
+            if (!name) {
+                alert("Please enter a student name.");
+                return;
+            }
+
+            students.push({ name, subject, classes: 0 });
+            studentNameInput.value = "";
+            renderStudents();
+        });
+
+        // ---------- EXPORT TO EXCEL (CSV) ----------
+        function toCsvValue(value) {
+            const str = String(value ?? "");
+            if (/[",\n]/.test(str)) {
+                return '"' + str.replace(/"/g, '""') + '"';
+            }
+            return str;
+        }
+
+        function exportToCsv() {
+            recalcSalary();
+            const s = lastSalaryData;
+
+            const rows = [];
+            rows.push(["JetLearn Salary & Student Export"]);
+            rows.push(["Generated at", new Date().toLocaleString()]);
+            rows.push([]);
+
+            rows.push(["Salary summary"]);
+            rows.push(["Total payout (INR)", s.total]);
+            rows.push(["Total classes", s.totalClasses]);
+            rows.push(["Paid classes amount", s.paidAmount]);
+            rows.push(["Calibration amount", s.calibAmount]);
+            rows.push(["No-shows amount", s.noShowAmount]);
+            rows.push(["Night classes amount", s.nightAmount]);
+            rows.push(["Conversions amount", s.convAmount]);
+            rows.push(["Auditing amount", s.auditAmount]);
+            rows.push([]);
+            rows.push(["Salary inputs (counts)"]);
+            rows.push(["Paid Maths", s.counts.paidMath]);
+            rows.push(["Paid Coding", s.counts.paidCoding]);
+            rows.push(["Calibration", s.counts.calibration]);
+            rows.push(["No-shows", s.counts.noshow]);
+            rows.push(["Night classes", s.counts.night]);
+            rows.push(["Conversions", s.counts.conversions]);
+            rows.push(["Auditing", s.counts.auditing]);
+
+            rows.push([]);
+            rows.push(["Students"]);
+            rows.push(["Name", "Subject", "Classes"]);
+
+            students.forEach((st) => {
+                rows.push([st.name, st.subject, st.classes]);
+            });
+
+            const csvString = rows
+                .map((row) => row.map(toCsvValue).join(","))
+                .join("\r\n");
+
+            const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "jetlearn_dashboard_export.csv";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        exportBtn.addEventListener("click", exportToCsv);
+
+        // init
+        renderNotificationsEmptyState();
+        renderStudents();
+    </script>
 </body>
+
 </html>
